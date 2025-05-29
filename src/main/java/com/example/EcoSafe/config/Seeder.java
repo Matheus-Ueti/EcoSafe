@@ -28,8 +28,11 @@ public class Seeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        if (usuarioRepository.count() > 0) {
+            System.out.println("=== DADOS JÁ EXISTEM NO BANCO ===");
+            return;
+        }
         
-        // Criar locais
         Local sp = new Local();
         sp.setNome("Centro de Monitoramento SP");
         sp.setCidade("São Paulo");
@@ -51,7 +54,6 @@ public class Seeder implements CommandLineRunner {
         mg.setCoordenadas("-19.9191,-43.9386");
         mg = localRepository.save(mg);
 
-        // Criar usuários
         Usuario admin = new Usuario();
         admin.setNome("Administrador EcoSafe");
         admin.setEmail("admin@ecosafe.com");
@@ -76,7 +78,6 @@ public class Seeder implements CommandLineRunner {
         tecnico.setLocalizacao(mg);
         usuarioRepository.save(tecnico);
 
-        // Criar sensores
         Sensor pluviometro = new Sensor();
         pluviometro.setTipo("Pluviômetro");
         pluviometro.setLocalizacao(sp);

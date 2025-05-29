@@ -20,14 +20,15 @@ public class SwaggerConfig {
                         .version("1.0")
                         .description("Sistema de monitoramento ambiental em tempo real para prevenção de enchentes, incêndios florestais e ventos fortes")
                         .contact(new Contact()
-                                .name("EcoSafe Team")
-                                .email("contato@ecosafe.com")))
-                .addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"))
-                .components(new Components()
+                        .name("EcoSafe Team")
+                        .email("contato@ecosafe.com")))
+                        .addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"))
+                        .components(new Components()
                         .addSecuritySchemes("Bearer Authentication",
-                                new SecurityScheme()
-                                        .type(SecurityScheme.Type.HTTP)
-                                        .scheme("bearer")
-                                        .bearerFormat("JWT")));
+                        new SecurityScheme()
+                        .type(SecurityScheme.Type.HTTP)
+                        .scheme("bearer")
+                        .bearerFormat("JWT")));
+                        
     }
 } 

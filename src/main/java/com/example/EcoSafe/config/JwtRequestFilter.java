@@ -37,7 +37,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String username = null;
         String jwtToken = null;
         
-        // JWT Token está no formato "Bearer token". Remover a palavra Bearer e obter apenas o Token
         if (requestTokenHeader != null && requestTokenHeader.startsWith("Bearer ")) {
             jwtToken = requestTokenHeader.substring(7);
             try {
@@ -51,21 +50,15 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             logger.warn("JWT Token não começa com Bearer String");
         }
 
-        // Uma vez que obtemos o token, validamos ele.
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-
-            // se o token é válido, configure Spring Security para definir autenticação manualmente
             if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
 
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
                 usernamePasswordAuthenticationToken
                         .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                // Após definir a Autenticação no contexto, especificamos
-                // que o usuário atual está autenticado. Então passa os
-                // filtros de segurança Spring.
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }
         }
