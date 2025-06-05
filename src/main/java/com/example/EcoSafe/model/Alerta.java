@@ -1,17 +1,22 @@
 package com.example.EcoSafe.model;
 
-import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Table(name = "alerta")
@@ -39,18 +44,4 @@ public class Alerta {
     @Size(max = 20, message = "Nível de urgência deve ter no máximo 20 caracteres")
     @Column(name = "nivel_urgencia", length = 20)
     private String nivelUrgencia;
-    
-    @Column(name = "data_hora")
-    private LocalDateTime dataHora;
-    
-    @OneToMany(mappedBy = "alerta", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonManagedReference("alerta-usuarios")
-    private List<UsuarioAlerta> usuarioAlertas;
-    
-    @PrePersist
-    protected void onCreate() {
-        if (dataHora == null) {
-            dataHora = LocalDateTime.now();
-        }
-    }
 } 

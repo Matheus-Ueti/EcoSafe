@@ -1,5 +1,5 @@
 package com.example.EcoSafe.controller;
-
+import com.example.EcoSafe.dto.SensorRequest;
 import com.example.EcoSafe.model.Sensor;
 import com.example.EcoSafe.service.SensorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,9 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import jakarta.validation.Valid;
-
 @RestController
 @RequestMapping("/api/sensores")
 @CrossOrigin(origins = "*")
@@ -33,8 +31,8 @@ public class SensorController {
     }
 
     @PostMapping
-    public ResponseEntity<Sensor> criarSensor(@Valid @RequestBody Sensor sensor) {
-        Sensor novoSensor = sensorService.criarSensor(sensor);
+    public ResponseEntity<Sensor> criarSensor(@Valid @RequestBody SensorRequest request) {
+        Sensor novoSensor = sensorService.criarSensor(request);
         return ResponseEntity.ok(novoSensor);
     }
 

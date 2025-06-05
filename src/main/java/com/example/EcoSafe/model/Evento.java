@@ -1,17 +1,27 @@
 package com.example.EcoSafe.model;
 
-import jakarta.persistence.*;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Table(name = "evento")
@@ -40,9 +50,6 @@ public class Evento {
     @Column(name = "nivel_risco", length = 20)
     private String nivelRisco;
     
-    @Column(name = "data_evento")
-    private LocalDateTime dataEvento;
-    
     @Size(max = 500, message = "Detalhes devem ter no máximo 500 caracteres")
     @Column(name = "detalhes", length = 500)
     private String detalhes;
@@ -50,11 +57,4 @@ public class Evento {
     @OneToMany(mappedBy = "evento", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference("evento-alertas")
     private List<Alerta> alertas;
-    
-    @PrePersist
-    protected void onCreate() {
-        if (dataEvento == null) {
-            dataEvento = LocalDateTime.now();
-        }
-    }
 } 

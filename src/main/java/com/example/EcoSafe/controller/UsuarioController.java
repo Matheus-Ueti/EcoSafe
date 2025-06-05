@@ -1,5 +1,6 @@
 package com.example.EcoSafe.controller;
 
+import com.example.EcoSafe.dto.RegisterRequest;
 import com.example.EcoSafe.model.Usuario;
 import com.example.EcoSafe.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<Usuario> criarUsuario(@Valid @RequestBody Usuario usuario) {
+    public ResponseEntity<Usuario> criarUsuario(@Valid @RequestBody RegisterRequest usuario) {
         Usuario novoUsuario = usuarioService.criarUsuario(usuario);
         return ResponseEntity.ok(novoUsuario);
     }

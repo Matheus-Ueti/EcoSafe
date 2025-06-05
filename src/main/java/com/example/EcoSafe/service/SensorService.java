@@ -1,6 +1,9 @@
 package com.example.EcoSafe.service;
 
+import com.example.EcoSafe.dto.SensorRequest;
+import com.example.EcoSafe.model.Local;
 import com.example.EcoSafe.model.Sensor;
+import com.example.EcoSafe.repository.LocalRepository;
 import com.example.EcoSafe.repository.SensorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,7 +16,19 @@ public class SensorService {
     @Autowired
     private SensorRepository sensorRepository;
 
-    public Sensor criarSensor(Sensor sensor) {
+    @Autowired
+    private LocalRepository localRepository;
+
+    public Sensor criarSensor(SensorRequest request) {
+        Local local = localRepository.findById(request.getLocalizacaoId())
+            .orElseThrow(() -> new RuntimeException("Localização não encontrada"));
+
+        Sensor sensor = new Sensor();
+        sensor.setTipo(request.getTipo());
+        sensor.setLocalizacao(local);
+        sensor.setUnidadeMedida(request.getUnidadeMedida());
+        sensor.setStatus(request.getStatus());
+
         return sensorRepository.save(sensor);
     }
 
@@ -46,4 +61,4 @@ public class SensorService {
     public void deletarSensor(Long id) {
         sensorRepository.deleteById(id);
     }
-} 
+}
