@@ -1,21 +1,13 @@
-package com.example.EcoSafe.repository;
-
-import com.example.EcoSafe.model.Usuario;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+package br.com.fiap.money_control_api.repository;
 
 import java.util.Optional;
 
-@Repository
-public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import br.com.fiap.money_control_api.model.User;
+
+public interface UserRepository extends JpaRepository<User, Long>{
     
-    Optional<Usuario> findByEmail(String email);
-    
-    boolean existsByEmail(String email);
-   
-    boolean existsByCpf(String cpf);
-    
-    Page<Usuario> findByNomeContainingIgnoreCase(String nome, Pageable pageable);
+    Optional<User> findByEmail(String username);
+
 } 

@@ -1,62 +1,33 @@
-package com.example.EcoSafe.controller;
+package br.com.fiap.money_control_api.controller;
 
-import com.example.EcoSafe.dto.RegisterRequest;
-import com.example.EcoSafe.model.Usuario;
-import com.example.EcoSafe.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import br.com.fiap.money_control_api.model.User;
+import br.com.fiap.money_control_api.dto.UserResponse;
+import br.com.fiap.money_control_api.repository.UserRepository;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/usuarios")
-@CrossOrigin(origins = "*")
-public class UsuarioController {
+@RequestMapping("/users")
+public class UserController {
 
     @Autowired
-    private UsuarioService usuarioService;
+    private UserRepository repository;
 
-    @GetMapping
-    public ResponseEntity<Page<Usuario>> listarTodos(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        Page<Usuario> usuarios = usuarioService.listarTodos(PageRequest.of(page, size));
-        return ResponseEntity.ok(usuarios);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Usuario> buscarPorId(@PathVariable Long id) {
-        Usuario usuario = usuarioService.buscarPorId(id);
-        return ResponseEntity.ok(usuario);
-    }
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @PostMapping
-    public ResponseEntity<Usuario> criarUsuario(@Valid @RequestBody RegisterRequest usuario) {
-        Usuario novoUsuario = usuarioService.criarUsuario(usuario);
-        return ResponseEntity.ok(novoUsuario);
+    public ResponseEntity<UserResponse> create(@RequestBody @Valid User user){
+        user.setPassword(passwordEncoder.encode(user.getPassword())); 
+        var userSaved = repository.save(user);
+        return ResponseEntity.ok(new UserResponse(userSaved.getId(),userSaved.getEmail(), userSaved.getRole()));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Usuario> atualizarUsuario(@PathVariable Long id, @Valid @RequestBody Usuario usuario) {
-        Usuario usuarioAtualizado = usuarioService.atualizarUsuario(id, usuario);
-        return ResponseEntity.ok(usuarioAtualizado);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletarUsuario(@PathVariable Long id) {
-        usuarioService.deletarUsuario(id);
-        return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/buscar")
-    public ResponseEntity<Page<Usuario>> buscarPorNome(
-            @RequestParam String nome,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        Page<Usuario> usuarios = usuarioService.buscarPorNome(nome, PageRequest.of(page, size));
-        return ResponseEntity.ok(usuarios);
-    }
 } 

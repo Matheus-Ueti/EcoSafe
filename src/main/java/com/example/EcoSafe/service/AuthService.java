@@ -1,4 +1,4 @@
-package com.example.EcoSafe.service;
+package br.com.fiap.money_control_api.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -6,17 +6,20 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.example.EcoSafe.repository.UsuarioRepository;
+import br.com.fiap.money_control_api.repository.UserRepository;
 
 @Service
 public class AuthService implements UserDetailsService {
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return usuarioRepository.findByEmail(username)
-            .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
+        return userRepository.findByEmail(username)
+                .orElseThrow(
+                        () -> new UsernameNotFoundException("usuário não encontrado")
+                );
     }
+
 }

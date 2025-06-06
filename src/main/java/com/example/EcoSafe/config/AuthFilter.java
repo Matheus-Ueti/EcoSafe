@@ -1,4 +1,4 @@
-package com.example.EcoSafe.config;
+package br.com.fiap.money_control_api.config;
 
 import java.io.IOException;
 
@@ -8,8 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.example.EcoSafe.model.Usuario;
-import com.example.EcoSafe.service.TokenService;
+import br.com.fiap.money_control_api.service.TokenService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -23,33 +22,32 @@ public class AuthFilter extends OncePerRequestFilter {
     private TokenService tokenService;
 
     @Override
-    protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain) throws ServletException, IOException {
-
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+        
+        //verificar o header
         var header = request.getHeader("Authorization");
-
-        if (header == null || !header.startsWith("Bearer ")) {
+        if(header == null){
             filterChain.doFilter(request, response);
             return;
         }
 
-        var token = header.replace("Bearer ", "");
-
-        try {
-            Usuario usuario = tokenService.getUsuarioFromToken(token);
-            if (usuario != null) {
-                var authentication = new UsernamePasswordAuthenticationToken(
-                        usuario, null, usuario.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
-        } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Token inválido ou expirado");
+        //tipo Bearer
+        if(!header.startsWith("Bearer ")){
+            response.setStatus(401);
             return;
         }
 
+        //validar o token
+        var token = header.replace("Bearer ", "");
+        var user = tokenService.getUserFromToken(token);
+        System.out.println(user);
+
+        //autenticar usuario
+        var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
         filterChain.doFilter(request, response);
     }
+}
 }
