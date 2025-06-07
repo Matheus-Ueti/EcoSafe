@@ -9,29 +9,30 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.EcoSafe.model.Usuario;
 import com.example.EcoSafe.service.UsuarioService;
-import com.example.EcoSafe.dto.AuthResponse;
 import com.example.EcoSafe.dto.RegisterRequest;
-import com.example.EcoSafe.service.TokenService;
+import com.example.EcoSafe.dto.UsuarioResponse;
 
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/cadastro")  // Alterado de "/users" para "/cadastro"
 public class UserController {
 
     @Autowired
     private UsuarioService usuarioService;
     
-    @Autowired
-    private TokenService tokenService;
-
     @PostMapping
-    public ResponseEntity<AuthResponse> create(@RequestBody @Valid RegisterRequest registerRequest){
+    public ResponseEntity<UsuarioResponse> create(@RequestBody @Valid RegisterRequest registerRequest){
         
         var usuario = usuarioService.criarUsuario(registerRequest);
         
-        String token = tokenService.generateToken(usuario);
+        // Removemos a geração do token aqui
+        // Retornamos apenas os dados do usuário cadastrado
         
-        return ResponseEntity.ok(new AuthResponse(token, usuario.getId(), usuario.getNome(), usuario.getEmail()));
+        return ResponseEntity.ok(new UsuarioResponse(
+            usuario.getId(), 
+            usuario.getNome(), 
+            usuario.getEmail()
+        ));
     }
 }

@@ -10,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class SensorService {
 
@@ -20,15 +22,24 @@ public class SensorService {
     private LocalRepository localRepository;
 
     public Sensor criarSensor(SensorRequest request) {
-        Local local = localRepository.findById(request.getLocalizacaoId())
-            .orElseThrow(() -> new RuntimeException("Localização não encontrada"));
-
+        // Inicializar o sensor
         Sensor sensor = new Sensor();
         sensor.setTipo(request.getTipo());
-        sensor.setLocalizacao(local);
         sensor.setUnidadeMedida(request.getUnidadeMedida());
         sensor.setStatus(request.getStatus());
-
+        
+        // Tentar buscar a localização, mas não falhar se não encontrar
+        if (request.getLocalizacaoId() != null) {
+            try {
+                Optional<Local> localOpt = localRepository.findById(request.getLocalizacaoId());
+                localOpt.ifPresent(sensor::setLocalizacao);
+            } catch (Exception e) {
+                // Log do erro, mas continua sem localização
+                System.out.println("Não foi possível associar à localização: " + e.getMessage());
+            }
+        }
+        
+        // Salvar o sensor mesmo sem localização
         return sensorRepository.save(sensor);
     }
 

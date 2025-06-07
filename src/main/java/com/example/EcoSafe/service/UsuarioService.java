@@ -25,25 +25,25 @@ public class UsuarioService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public Usuario criarUsuario(RegisterRequest registerRequest) {
+    public Usuario criarUsuario(RegisterRequest request) {
         // Verificar se email já existe
-        if (usuarioRepository.existsByEmail(registerRequest.getEmail())) {
+        if (usuarioRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Email já está em uso");
         }
         
         // Verificar se CPF já existe
-        if (usuarioRepository.existsByCpf(registerRequest.getCpf())) {
+        if (usuarioRepository.existsByCpf(request.getCpf())) {
             throw new RuntimeException("CPF já está em uso");
         }
 
         Usuario usuario = new Usuario();
-        usuario.setNome(registerRequest.getNome());
-        usuario.setEmail(registerRequest.getEmail());
-        usuario.setCpf(registerRequest.getCpf());
-        usuario.setSenha(passwordEncoder.encode(registerRequest.getSenha()));
+        usuario.setNome(request.getNome());
+        usuario.setEmail(request.getEmail());
+        usuario.setCpf(request.getCpf());
+        usuario.setSenha(passwordEncoder.encode(request.getSenha()));
         
-        if (registerRequest.getLocalizacaoId() != null) {
-            Local local = localRepository.findById(registerRequest.getLocalizacaoId())
+        if (request.getLocalizacaoId() != null) {
+            Local local = localRepository.findById(request.getLocalizacaoId())
                     .orElseThrow(() -> new RuntimeException("Localização não encontrada"));
             usuario.setLocalizacao(local);
         }

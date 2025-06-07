@@ -25,6 +25,15 @@ public class AuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         
+        // Verificar se a requisição é para um endpoint público
+        // ADICIONE ESTE BLOCO NO INÍCIO DO MÉTODO
+        String path = request.getRequestURI();
+        if (path.equals("/login") || path.equals("/cadastro") ||   // Alterado de "/users" para "/cadastro"
+            path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        
         var header = request.getHeader("Authorization");
         if(header == null){
             filterChain.doFilter(request, response);
