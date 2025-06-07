@@ -128,8 +128,6 @@ public class DatabaseSeeder {
         );
 
         sensorRepository.saveAll(sensores);
-
-        // Criando eventos com tipos do frontend
         var eventos = List.of(
             Evento.builder()
                 .tipoEvento("Enchente")
