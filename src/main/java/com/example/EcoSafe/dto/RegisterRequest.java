@@ -25,6 +25,5 @@ public class RegisterRequest {
     @Size(min = 6, message = "Senha deve ter pelo menos 6 caracteres")
     private String senha;
     
-    // ID da localização (opcional)
     private Long localizacaoId;
 } 

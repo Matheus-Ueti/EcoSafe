@@ -57,4 +57,4 @@ public class Evento {
     @OneToMany(mappedBy = "evento", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference("evento-alertas")
     private List<Alerta> alertas;
-} 
+}

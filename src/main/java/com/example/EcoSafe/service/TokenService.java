@@ -1,48 +1,52 @@
-package br.com.fiap.money_control_api.service;
+package com.example.EcoSafe.service;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.example.EcoSafe.model.Usuario;
+import com.example.EcoSafe.repository.UsuarioRepository;
 
-import br.com.fiap.money_control_api.controller.AuthController.Credentials;
-import br.com.fiap.money_control_api.controller.AuthController.Token;
-import br.com.fiap.money_control_api.model.User;
-import br.com.fiap.money_control_api.model.UserInfo;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Service
 public class TokenService {
-
-    Instant expiresAt = LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.ofHours(-3));
-    Algorithm algorithm = Algorithm.HMAC256("secret");
-
-    public Token createToken(User user){
-        var jwt = JWT.create()
-                .withSubject(user.getId().toString())
-                .withClaim("email", user.getEmail())
-                .withClaim("role", user.getRole().toString())
-                .withExpiresAt(expiresAt)
+    
+    @Value("${jwt.secret}")
+    private String secret;
+    
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+    
+    public String generateToken(Usuario usuario) {
+        Algorithm algorithm = Algorithm.HMAC256(secret);
+        
+        return JWT.create()
+                .withSubject(usuario.getEmail())
+                .withClaim("userId", usuario.getId())
+                .withClaim("name", usuario.getNome())
+                .withExpiresAt(Instant.now().plus(7, ChronoUnit.DAYS))
                 .sign(algorithm);
-
-        return new Token(jwt, user.getEmail());
     }
-
-    public User getUserFromToken(String token) {
-        var verifiedToken = JWT.require(algorithm).build().verify(token);
-
-        Long id = Long.valueOf(verifiedToken.getSubject());
-        String email = verifiedToken.getClaim("email").asString());
-        String role = verifiedToken.getClaim("role").asString());
-
-        return User.builder()
-                .id(id)
-                .email(email)
-                .role(UserRole.valueOf(role))
-                .build();
+    
+    public UserDetails getUserFromToken(String token) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+            var email = JWT.require(algorithm)
+                            .build()
+                            .verify(token)
+                            .getSubject();
+            
+            return usuarioRepository.findByEmail(email)
+                            .orElseThrow(() -> new JWTVerificationException("Usuário não encontrado"));
+        } catch (JWTVerificationException e) {
+            throw new JWTVerificationException("Token inválido");
+        }
     }
-
 }

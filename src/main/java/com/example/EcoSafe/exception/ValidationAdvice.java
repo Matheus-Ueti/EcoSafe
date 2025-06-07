@@ -1,4 +1,4 @@
-package br.com.fiap.money_control_api.exception;
+package com.example.EcoSafe.exception;
 
 import java.util.List;
 
@@ -23,8 +23,8 @@ public class ValidationAdvice {
     public List<ValidationErrorMessage> handler(MethodArgumentNotValidException e) {
         return e.getFieldErrors()
                 .stream()
-                .map(ValidationErrorMessage::new) // método de referência
+                .map(ValidationErrorMessage::new) 
                 .toList();
     }
 
-} 
+}

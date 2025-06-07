@@ -10,14 +10,15 @@ import com.example.EcoSafe.repository.EventoRepository;
 import com.example.EcoSafe.repository.LocalRepository;
 import com.example.EcoSafe.repository.SensorRepository;
 import com.example.EcoSafe.repository.UsuarioRepository;
+
+import jakarta.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 @Profile("dev")
@@ -55,33 +56,23 @@ public class DatabaseSeeder {
                 .cidade("São Paulo")
                 .estado("SP")
                 .coordenadas("-23.5505,-46.6333")
-                .eventos(new ArrayList<>())
-                .usuarios(new ArrayList<>())
-                .sensores(new ArrayList<>())
                 .build(),
             Local.builder()
                 .nome("Zona Sul do Rio")
                 .cidade("Rio de Janeiro")
                 .estado("RJ")
                 .coordenadas("-22.9068,-43.1729")
-                .eventos(new ArrayList<>())
-                .usuarios(new ArrayList<>())
-                .sensores(new ArrayList<>())
                 .build(),
             Local.builder()
                 .nome("Região Central BH")
                 .cidade("Belo Horizonte")
                 .estado("MG")
-                .coordenadas("-19.9191,-43.9386")
-                .eventos(new ArrayList<>())
-                .usuarios(new ArrayList<>())
-                .sensores(new ArrayList<>())
+                .coordenadas("-19.9208,-43.9378")
                 .build()
         );
 
         localRepository.saveAll(locais);
 
-        // Criando usuários
         var usuarios = List.of(
             Usuario.builder()
                 .nome("Administrador EcoSafe")
@@ -129,9 +120,9 @@ public class DatabaseSeeder {
                 .status("Manutenção")
                 .build(),
             Sensor.builder()
-                .tipo("Temperatura")
+                .tipo("Pluviometria")
                 .localizacao(locais.get(2))
-                .unidadeMedida("°C")
+                .unidadeMedida("mm")
                 .status("Inativo")
                 .build()
         );
@@ -145,28 +136,24 @@ public class DatabaseSeeder {
                 .local(locais.get(0))
                 .nivelRisco("Alto")
                 .detalhes("Previsão de chuva intensa com possibilidade de alagamentos no centro da cidade")
-                .alertas(new ArrayList<>())
                 .build(),
             Evento.builder()
                 .tipoEvento("Incêndio Florestal")
                 .local(locais.get(1))
                 .nivelRisco("Crítico")
                 .detalhes("Focos de incêndio detectados na região serrana com vento forte")
-                .alertas(new ArrayList<>())
                 .build(),
             Evento.builder()
                 .tipoEvento("Vento Forte")
                 .local(locais.get(2))
                 .nivelRisco("Médio")
                 .detalhes("Rajadas de vento de até 80km/h previstas para a região")
-                .alertas(new ArrayList<>())
                 .build(),
             Evento.builder()
                 .tipoEvento("Tempestade")
                 .local(locais.get(0))
                 .nivelRisco("Alto")
                 .detalhes("Tempestade elétrica com granizo e ventos fortes")
-                .alertas(new ArrayList<>())
                 .build()
         );
 
@@ -201,7 +188,7 @@ public class DatabaseSeeder {
         System.out.println("=== DADOS INICIAIS CARREGADOS ===");
         System.out.println("Locais: " + locais.size() + " (Centro de São Paulo, Zona Sul do Rio, Região Central BH)");
         System.out.println("Usuários: " + usuarios.size() + " (admin, joao, maria)");
-        System.out.println("Sensores: " + sensores.size() + " (Temperatura, Umidade, Pressão)");
+        System.out.println("Sensores: " + sensores.size() + " (Temperatura, Umidade, Pressão, Pluviometria)");
         System.out.println("Eventos: " + eventos.size() + " (Enchente, Incêndio Florestal, Vento Forte, Tempestade)");
         System.out.println("Alertas: " + alertas.size() + " (Alto, Crítico, Médio)");
         System.out.println("Status dos sensores: Ativo, Manutenção, Inativo");

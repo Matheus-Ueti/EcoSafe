@@ -1,4 +1,4 @@
-package br.com.fiap.money_control_api.config;
+package com.example.EcoSafe.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
